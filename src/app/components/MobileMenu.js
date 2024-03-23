@@ -52,6 +52,16 @@ import {
 export function MobileMenu({ settings, setSettings }) {
   const { feature, model, ratio, negativePrompt, uid, secretKey, seed, fileData, canny, depth, mlsd } = settings;
   const fileInputRef = useRef(null);
+  const [negativePromptFocused, setNegativePromptFocused] = useState(false);
+
+  useEffect(() => {
+    if (negativePromptFocused) {
+      const textarea = document.querySelector("textarea[value='" + negativePrompt + "']");
+      if (textarea) {
+        textarea.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    }
+  }, [negativePromptFocused, negativePrompt]);
 
   const handleSettingsChange = (attribute, value) => {
     setSettings((prevSettings) => ({
@@ -97,7 +107,7 @@ export function MobileMenu({ settings, setSettings }) {
       mlsd: 50,
       gImages: [],
       isGenerating: false,
-      prompt:""
+      prompt: ""
     })
   };
 
@@ -344,7 +354,12 @@ export function MobileMenu({ settings, setSettings }) {
 
               </DrawerHeader>
               <div className="mx-2 my-4">
-                <Textarea className="text-xs" value={negativePrompt} onChange={(e) => handleSettingsChange("negativePrompt", e.target.value)} />
+                <Textarea 
+                  className="text-xs" 
+                  value={negativePrompt} 
+                  onChange={(e) => handleSettingsChange("negativePrompt", e.target.value)} 
+                  onFocus={() => setNegativePromptFocused(true)}
+                  onBlur={() => setNegativePromptFocused(false)} />
               </div>
             </DrawerContent>
           </Drawer>
