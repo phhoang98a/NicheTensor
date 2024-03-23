@@ -11,6 +11,13 @@ import { FiDownload } from "react-icons/fi";
 import { Button } from '@/components/ui/button';
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
+import { Skeleton } from "@/components/ui/skeleton"
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+} from "@/components/ui/alert"
+import { Loader2 } from 'lucide-react';
 
 const CustomLabel = ({ label, link }) => {
   return (
@@ -51,7 +58,7 @@ const CustomCard = ({ images }) => {
 }
 
 export default function Presentation({ settings, setSettings }) {
-  const { feature, gImages, isGenerating } = settings;
+  const { feature, gImages, isGenerating, model } = settings;
   const realisticImages = [
     "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/401d2674-e1f8-4976-a615-36110d0b76b3/original=true/ref-res-1.jpeg",
     "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/d2050c06-e916-4091-857a-66bdafcaf6d9/original=true/00029-913302605.jpeg",
@@ -120,11 +127,26 @@ export default function Presentation({ settings, setSettings }) {
       {
         isGenerating ? (
           <>
-            <div className="flex justify-center items-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mr-3"></div>
-              👩🏾‍🍳 Whipping up your words into art...
+            <div className="mb-10 pb-[100px] sm:pb-0">
+              <Card className="mb-6">
+                <CardContent>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-5">
+                    <Skeleton className="h-[500px] rounded-xl" />
+                    <Skeleton className="h-[500px] rounded-xl" />
+                    <Skeleton className="h-[500px] rounded-xl" />
+                    <Skeleton className="h-[500px] rounded-xl" />
+                  </div>
+                </CardContent>
+              </Card>
             </div>
-            
+            <div className='fixed bottom-4 right-4 animate-fade-out'>
+              <Alert className="bg-white dark:bg-[rgba(29,29,29,1)] rounded-xl flex items-center">
+                <AlertDescription className="flex items-center">
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  <span>👩🏾‍🍳 Whipping up your words into art...</span>
+                </AlertDescription>
+              </Alert>
+            </div>
           </>
         ) : (
           <>
@@ -246,12 +268,12 @@ export default function Presentation({ settings, setSettings }) {
                 </>
               )
             }
-            <div className="sticky bottom-0 hidden sm:block">
-              <Prompt settings={settings} setSettings={setSettings} />
-            </div>
           </>
         )
       }
+      <div className="sticky bottom-0 hidden sm:block">
+        <Prompt settings={settings} setSettings={setSettings} />
+      </div>
     </div>
 
   );

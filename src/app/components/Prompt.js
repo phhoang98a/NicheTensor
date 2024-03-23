@@ -10,9 +10,10 @@ import {
   AlertTitle,
 } from "@/components/ui/alert"
 import { RocketIcon } from "@radix-ui/react-icons"
+import { Loader2 } from 'lucide-react';
 
 export default function Prompt({ settings, setSettings }) {
-  const { feature, model, ratio, negativePrompt, uid, secretKey, seed, fileData, canny, depth, mlsd, prompt } = settings;
+  const { feature, model, ratio, negativePrompt, uid, secretKey, seed, fileData, canny, depth, mlsd, prompt, isGenerating } = settings;
   const RATIO_CONFIG = {
     "SD": { "Tall": [768, 432], "Square": [512, 512], "Wide": [512, 640] },
     "SDXL": { "Tall": [1024, 576], "Square": [1024, 1024], "Wide": [768, 960] }
@@ -58,7 +59,7 @@ export default function Prompt({ settings, setSettings }) {
   }
 
   const runPrompt = async () => {
-    if (fileData || feature=="Text To Image") {
+    if (fileData || feature == "Text To Image") {
       handleSettingsChange("isGenerating", true);
       handleSettingsChange("gImages", []);
       let data;
@@ -71,7 +72,7 @@ export default function Prompt({ settings, setSettings }) {
         type = "controlnet_txt2img"
       }
       let key = secretKey
-      if (secretKey===""){
+      if (secretKey === "") {
         key = "capricorn_feb"
       }
 
@@ -164,15 +165,19 @@ export default function Prompt({ settings, setSettings }) {
               transition={{ type: "spring", stiffness: 400, damping: 10 }}
             >
               <Button
-                className="font-bold py-2 px-4 text-xs sm:text-sm rounded-3xl sm:rounded-2xl "
+                className="font-bold py-2 px-4 text-xs sm:text-sm rounded-3xl sm:rounded-2xl flex items-center justify-center "
                 style={{ backgroundColor: "rgba(2, 101, 220)" }}
-                disabled={prompt === "" || settings.isGenerating ? true : false}
+                disabled={prompt === "" || isGenerating ? true : false}
                 onClick={handlePrompt}
               >
-                <RiAiGenerate size={20} />
-                <div className='ml-2 hidden sm:block'>
-                  Try Prompt
-                </div>
+                {isGenerating ? <Loader2 className="h-4 w-4 animate-spin" /> :
+                  <>
+                    <RiAiGenerate size={20} />
+                    <div className='ml-2 hidden sm:block'>
+                      Try Prompt
+                    </div>
+                  </>
+                }
               </Button>
             </motion.div>
           </div>
@@ -181,14 +186,15 @@ export default function Prompt({ settings, setSettings }) {
       </div>
       {showAlert && (
         <div className='fixed bottom-4 right-4 animate-fade-out'>
-          <Alert className="bg-white dark:bg-[rgba(29,29,29,1)] ">
+          <Alert className="bg-white dark:bg-[rgba(29,29,29,1)] rounded-xl ">
             <RocketIcon className="h-4 w-4" />
             <AlertTitle>Hint!</AlertTitle>
             <AlertDescription>
               Image upload required for the next step in our process
             </AlertDescription>
           </Alert>
-        </div>)}
+        </div>
+      )}
     </>
   );
 }
